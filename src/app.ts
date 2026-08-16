@@ -9,6 +9,9 @@ import notificationRoutes from "./routes/notification.routes";
 
 const app: Express = express();
 
+// Trust reverse proxy (needed for secure cookies on Render/Vercel/Heroku)
+app.set("trust proxy", 1);
+
 const allowedOrigins = [
   process.env.CLIENT_URL,
   "http://localhost:5173",

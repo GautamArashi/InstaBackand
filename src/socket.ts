@@ -4,9 +4,21 @@ import { Server as HTTPServer } from "http";
 let io: Server;
 
 export const initSocket = (httpServer: HTTPServer): Server => {
+  const allowedOrigins = [
+    process.env.CLIENT_URL,
+    "http://localhost:5173",
+    "http://localhost:3000",
+  ].filter((url): url is string => Boolean(url));
+
   io = new Server(httpServer, {
     cors: {
-      origin: process.env.CLIENT_URL || "http://localhost:5173",
+      origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(null, true);
+        }
+      },
       credentials: true,
     },
   });
