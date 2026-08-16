@@ -2,13 +2,6 @@ import { Request, Response } from "express";
 import User from "../models/User.model";
 import { generateToken } from "../utils/generateToken";
 
-const isProduction = process.env.NODE_ENV === "production";
-const cookieOptions = {
-  httpOnly: true,
-  secure: isProduction,
-  sameSite: isProduction ? ("none" as const) : ("strict" as const),
-};
-
 export const signup = async (req: Request, res: Response): Promise<void> => {
   try {
     const { username, email, password, fullName } = req.body;
@@ -44,7 +37,9 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
 
     // Set the token as an httpOnly cookie
     res.cookie("token", token, {
-      ...cookieOptions,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: (process.env.NODE_ENV === "production" ? "none" : "lax") as "none" | "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
     });
 
@@ -105,7 +100,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     // Set the token as an httpOnly cookie
     res.cookie("token", token, {
-      ...cookieOptions,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: (process.env.NODE_ENV === "production" ? "none" : "lax") as "none" | "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
     });
 
@@ -135,7 +132,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
 export const logout = async (req: Request, res: Response): Promise<void> => {
   try {
-    res.clearCookie("token", cookieOptions);
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: (process.env.NODE_ENV === "production" ? "none" : "lax") as "none" | "lax",
+    });
 
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error: any) {
