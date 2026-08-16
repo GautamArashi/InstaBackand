@@ -43,9 +43,10 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
     });
 
-    // Return 201 status with user data (excluding password)
+    // Return 201 status with user data (excluding password) and token
     res.status(201).json({
       message: "User registered successfully",
+      token,
       user: {
         _id: newUser._id,
         username: newUser.username,
@@ -106,9 +107,10 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
     });
 
-    // Return 200 status with user data (excluding password)
+    // Return 200 status with user data (excluding password) and token
     res.status(200).json({
       message: "Logged in successfully",
+      token,
       user: {
         _id: user._id,
         username: user.username,
